@@ -1,9 +1,11 @@
 
 import MaterialTable from "@material-table/core";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import tableIcons from "./tableIcons";
 import tableLocalization from "./tableLocalization";
+
+import RequestHandler from "../utils/request_handler";
 
 export default function OccupationScreen(props) {
 
@@ -13,9 +15,27 @@ export default function OccupationScreen(props) {
 
     const columns = [
         { title: "ID", field: "id", editable: "never", type: "numeric" },
-        { title: "Nome", field: "nome" },
-        { title: "#Participantes", field: "nparticipantes", editable: "never" },
+        { title: "Nome", field: "name" },
+        { title: "#Participantes", field: "participantCount", editable: "never" },
     ];
+
+    useEffect(() => {
+        RequestHandler.axios.post("/occupation/get-all")
+            .then(resp => {
+                console.log(resp);
+                const occupations = resp.data.map(el => ({
+                    id: el.id,
+                    name: el.name,
+                    participantCount: 99999,
+                }));
+
+                setData(occupations);
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("Ocorreu um erro durante a sua requisição.");
+            });
+    }, [showToast]);
 
     return (
         <div style={{ padding: 20 }}>

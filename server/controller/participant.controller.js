@@ -18,6 +18,8 @@ async function create(req, res, next) {
         participant = await Participant.create({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
+        }, {
+            include: [Occupation, Company],
         });
     }
     catch (err) {
@@ -51,7 +53,7 @@ async function create(req, res, next) {
         await participant.setCompany(newCompany);
     }
 
-    return res.status(httpStatus.OK).send(participant);
+    return res.status(httpStatus.OK).send(await participant.reload());
 }
 
 async function update(req, res, next) {
@@ -64,7 +66,7 @@ async function update(req, res, next) {
         return next(err);
     }
 
-    if (req.body.occupation && participant.Occupation.name !== req.body.occupation) {
+    if (req.body.occupation && (participant.Occupation || {}).name !== req.body.occupation) {
         const [newOccupation, created] = await Occupation.findOrCreate({
             where: {
                 name: req.body.occupation,
@@ -77,7 +79,7 @@ async function update(req, res, next) {
         await participant.setOccupation(newOccupation);
     }
 
-    if (req.body.company && participant.Company.name !== req.body.company) {
+    if (req.body.company && (participant.Company || {}).name !== req.body.company) {
         const [newCompany, created] = await Company.findOrCreate({
             where: {
                 name: req.body.company,
@@ -95,8 +97,7 @@ async function update(req, res, next) {
         lastName: req.body.lastName,
     });
 
-    return res.status(httpStatus.OK)
-        .send(participant);
+    return res.status(httpStatus.OK).send(await participant.reload());
 }
 
 async function destroy(req, res, next) {

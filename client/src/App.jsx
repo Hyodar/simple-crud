@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 
 import Tabs from "@mui/material/Tabs";
@@ -18,10 +18,19 @@ import CompanyScreen from "./components/CompanyScreen";
 import PresentationScreen from "./components/PresentationScreen";
 import LoginScreen from "./components/LoginScreen";
 
+import RequestHandler from "./utils/request_handler";
+
 function AppMain(props) {
   const [mode, setMode] = useState("participantes");
   const [loggedIn, setLoggedIn] = useState(false);
   const theme = createTheme({}, ptBR);
+
+  useEffect(() => {
+    console.log(RequestHandler);
+    if (RequestHandler.token) {
+      setLoggedIn(true);
+    }
+  }, []);
 
   function showToast(msg) {
     toast(msg, {
