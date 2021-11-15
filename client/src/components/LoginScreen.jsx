@@ -36,11 +36,8 @@ export default function LoginScreen(props) {
 
     return (
         <Paper className="column jc-center" style={{ padding: 40, backgroundColor: "ghostwhite" }}>
-            <TextField variant="outlined" label="Usuário" value={username} onChange={ev => setUsername(ev.target.value)} />
-            <br />
-            <TextField label="Senha" type="password" value={password} onChange={ev => setPassword(ev.target.value)} />
-            <br />
-            <br />
+            <TextField variant="outlined" label="Usuário" value={username} onChange={ev => setUsername(ev.target.value)} style={{ marginBottom: "20px" }} />
+            <TextField label="Senha" type="password" value={password} onChange={ev => setPassword(ev.target.value)} style={{ marginBottom: "40px" }} />
             <Button onClick={handleLogin}>Login</Button>
         </Paper>
     )

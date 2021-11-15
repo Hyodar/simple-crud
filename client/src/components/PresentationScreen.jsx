@@ -48,28 +48,70 @@ export default function PresentationScreen(props) {
                     localization={tableLocalization}
                     editable={{
                         onRowAdd: newRow => new Promise((resolve, reject) => {
-                            const updatedRows = [...data, newRow];
-
-                            setData(updatedRows);
-                            resolve();
-                        }).then(() => showToast("Participante adicionado!")),
-                        onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
-                            const rows = data.map(el => {
-                                if (el === oldData) {
-                                    return newData;
-                                }
-                                return el;
+                            RequestHandler.axios.post("presentation/create", newRow)
+                            .then(resp => {
+                                const presentation = resp.data;
+                                setData([...data, {
+                                    id: presentation.id,
+                                    title: presentation.title,
+                                    presenters: JSON.stringify((presentation.Participants || []).map(p => p.id)).slice(1, -1),
+                                }]);
+                                resolve();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                reject();
                             });
+                        }).then(() => {
+                            showToast("Apresentação adicionada!")
+                        }).catch(err => {
+                            console.error(err);
+                            showToast("Ocorreu um erro durante a sua requisição.");
+                        }),
 
-                            setData(rows);
-                            resolve();
-                          }).then(() => showToast("Informações atualizadas!")),
-                        onRowDelete: (oldData) => new Promise((resolve, reject) => {
-                            const rows = data.filter(el => el !== oldData);
-                            
-                            setData(rows);
-                            resolve();
-                          }).then(() => showToast("Participante removido!")),
+                        onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
+                            RequestHandler.axios.post("/presentation/update", newData)
+                            .then(resp => {
+                                const presentation = resp.data;
+
+                                const dataUpdate = [...data];
+                                const targetIndex = dataUpdate.findIndex(el => el.id === newData.id);
+                                dataUpdate[targetIndex] = {
+                                    id: presentation.id,
+                                    title: presentation.title,
+                                    presenters: JSON.stringify((presentation.Participants || []).map(p => p.id)).slice(1, -1),
+                                };
+
+                                setData(dataUpdate);
+                                resolve();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                showToast("Ocorreu um erro durante a sua requisição.");
+                            });
+                        }).then(() => {
+                            showToast("Dados atualizados!")
+                        }).catch(err => {
+                            console.error(err);
+                            showToast("Ocorreu um erro durante a sua requisição.");
+                        }),
+
+                        onRowDelete: oldData => new Promise((resolve, reject) => {
+                            RequestHandler.axios.post("/presentation/delete", oldData)
+                            .then(resp => {
+                                setData(data.filter(el => el.id !== oldData.id));
+                                resolve();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                showToast("Ocorreu um erro durante a sua requisição.");
+                            });
+                        }).then(() => {
+                            showToast("Apresentação removida!")
+                        }).catch(err => {
+                            console.error(err);
+                            showToast("Ocorreu um erro durante a sua requisição.");
+                        }),
                     }}
                     options={{
                         actionsColumnIndex: -1,

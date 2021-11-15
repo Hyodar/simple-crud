@@ -16,6 +16,8 @@ async function create(req, res, next) {
     try {
         presentation = await Presentation.create({
             title: req.body.title,
+        }, {
+            include: [Participant],
         });
     }
     catch (err) {
@@ -23,15 +25,18 @@ async function create(req, res, next) {
         return next(apiErr);
     }
 
-    const participants = await Participant.findAll({
+    const participantIds = (req.body.presenters || "").split(",").filter(el => el).map(el => parseInt(el));
+    console.log(participantIds)
+
+    const presenters = await Participant.findAll({
         where: {
-            id: req.body.participants || [],
+            id: participantIds || [],
         },
     });
 
-    await presentation.setParticipants(participants);
+    await presentation.setParticipants(presenters);
 
-    return res.status(httpStatus.OK).send(await Presentation.findByPk(presentation.id, { include: [Participant] }));
+    return res.status(httpStatus.OK).send(await presentation.reload());
 }
 
 async function update(req, res, next) {
@@ -54,15 +59,17 @@ async function update(req, res, next) {
         return next(apiErr);
     }
 
-    const participants = await Participant.findAll({
+    const participantIds = (req.body.presenters || "").split(",").map(el => parseInt(el));
+
+    const presenters = await Participant.findAll({
         where: {
-            id: req.body.participants || [],
+            id: participantIds || [],
         },
     });
 
-    await presentation.setParticipants(participants);
+    await presentation.setParticipants(presenters);
 
-    return res.status(httpStatus.OK).send(presentation);
+    return res.status(httpStatus.OK).send(await presentation.reload());
 }
 
 async function destroy(req, res, next) {

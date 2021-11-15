@@ -8,8 +8,7 @@ async function getAll(req, res, next) {
         include: [Occupation, Company],
     });
 
-    return res.status(httpStatus.OK)
-        .send(participants);
+    return res.status(httpStatus.OK).send(participants);
 }
 
 async function create(req, res, next) {

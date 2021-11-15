@@ -48,27 +48,67 @@ export default function OccupationScreen(props) {
                     localization={tableLocalization}
                     editable={{
                         onRowAdd: newRow => new Promise((resolve, reject) => {
-                            const updatedRows = [...data, newRow];
-
-                            setData(updatedRows);
-                            resolve();
-                        }).then(() => showToast("Participante adicionado!")),
-                        onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
-                            const rows = data.map(el => {
-                                if (el === oldData) {
-                                    return newData;
-                                }
-                                return el;
+                            RequestHandler.axios.post("occupation/create", newRow)
+                            .then(resp => {
+                                const occupation = resp.data;
+                                setData([...data, {
+                                    id: occupation.id,
+                                    name: occupation.name,
+                                }]);
+                                resolve();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                reject();
                             });
-
-                            setData(rows);
-                            resolve();
+                        }).then(() => {
+                            showToast("Empresa adicionada!")
+                        }).catch(err => {
+                            console.error(err);
+                            showToast("Ocorreu um erro durante a sua requisição.");
                         }),
-                        onRowDelete: (oldData) => new Promise((resolve, reject) => {
-                            const rows = data.filter(el => el !== oldData);
-                            
-                            setData(rows);
-                            resolve();
+
+                        onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
+                            RequestHandler.axios.post("/occupation/update", newData)
+                            .then(resp => {
+                                const occupation = resp.data;
+
+                                const dataUpdate = [...data];
+                                const targetIndex = dataUpdate.findIndex(el => el.id === newData.id);
+                                dataUpdate[targetIndex] = {
+                                    id: occupation.id,
+                                    name: occupation.name,
+                                };
+
+                                setData(dataUpdate);
+                                resolve();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                showToast("Ocorreu um erro durante a sua requisição.");
+                            });
+                        }).then(() => {
+                            showToast("Dados atualizados!")
+                        }).catch(err => {
+                            console.error(err);
+                            showToast("Ocorreu um erro durante a sua requisição.");
+                        }),
+
+                        onRowDelete: oldData => new Promise((resolve, reject) => {
+                            RequestHandler.axios.post("/occupation/delete", oldData)
+                            .then(resp => {
+                                setData(data.filter(el => el.id !== oldData.id));
+                                resolve();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                showToast("Ocorreu um erro durante a sua requisição.");
+                            });
+                        }).then(() => {
+                            showToast("Empresa removida!")
+                        }).catch(err => {
+                            console.error(err);
+                            showToast("Ocorreu um erro durante a sua requisição.");
                         }),
                     }}
                     options={{

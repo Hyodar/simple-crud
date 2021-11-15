@@ -46,9 +46,9 @@ function AppMain(props) {
 
   const screens = {
     "participantes": <ParticipantScreen showToast={showToast} />,
-    "ocupações": <OccupationScreen />,
-    "empresas": <CompanyScreen />,
-    "apresentações": <PresentationScreen />
+    "ocupações": <OccupationScreen showToast={showToast} />,
+    "empresas": <CompanyScreen showToast={showToast} />,
+    "apresentações": <PresentationScreen showToast={showToast} />
   };
 
   return (
@@ -73,7 +73,10 @@ function AppMain(props) {
         }
         {
           !loggedIn &&
-          <LoginScreen onLogin={() => setLoggedIn(true)} showToast={showToast} />
+          <div>
+            <h3 style={{ alignSelf: "center", fontWeight: "normal", color: "white" }}>SGC - Sistema de Gerenciamento de Conferências</h3>
+            <LoginScreen onLogin={() => setLoggedIn(true)} showToast={showToast} />
+          </div>
         }
       </div>
     </ThemeProvider>
