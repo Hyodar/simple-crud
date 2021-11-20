@@ -17,5 +17,8 @@ export default {
         filterRow: {
             filterTooltip: "Filtro",
         },
+        editRow: {
+            deleteText: "Confirma exclusão?",
+        }
     },
 };
