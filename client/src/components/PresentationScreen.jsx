@@ -42,7 +42,7 @@ export default function PresentationScreen(props) {
             <div style={{ minWidth: "70vw", minHeight: "70vh" }}>
                 <MaterialTable
                     icons={tableIcons}
-                    title="Ocupações"
+                    title="Apresentações"
                     data={data}
                     columns={columns}
                     localization={tableLocalization}
