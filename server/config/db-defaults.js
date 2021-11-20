@@ -3,28 +3,28 @@ const bcrypt = require("bcrypt");
 
 async function initializeUser(db) {
     const users = await db['User'].bulkCreate([
-        { name: "Laudelino Bastos", password: bcrypt.hashSync("abc", 1) },
+        { name: "user", password: bcrypt.hashSync("pwd", 1) },
     ]);
 
     const occupations = await db['Occupation'].bulkCreate([
         { name: "Professor" },
-        { name: "Garota Mágica" },
+        { name: "Duelista" },
     ]);
 
     const companies = await db['Company'].bulkCreate([
         { name: "UTFPR" },
-        { name: "Mitakihara" },
+        { name: "Corporações Kaiba" },
     ]);
 
     const presentations = await db['Presentation'].bulkCreate([
-        { title: "Uma história de verão" },
-        { title: "Walpurgisnacht" },
+        { title: "Monstros de Duelo" },
+        { title: "Formação de Decks" },
     ]);
 
     const participants = await db['Participant'].bulkCreate([
-        { firstName: "Hermes Irineu", lastName: ""},
-        { firstName: "Madoka", lastName: ""},
-        { firstName: "Honoka", lastName: ""},
+        { firstName: "Seto Kaiba", lastName: ""},
+        { firstName: "Joey Wheeler", lastName: ""},
+        { firstName: "Yugi Muto", lastName: ""},
     ]);
 
     participants[0].setOccupation(occupations[1]);
