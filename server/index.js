@@ -1,12 +1,13 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-
-const routes = require("./route/index.js");
-const db = require("./config/sequelize");
 const httpStatus = require("http-status");
 
+const MainRoute = require("./route/main.route.js");
+const db = require("./config/sequelize");
+
 const app = express();
+const mainRoute = new MainRoute();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,7 +25,7 @@ app.use((req, res, next) => {
     }
 });
 
-app.use("/", routes);
+app.use("/", mainRoute.getRouter());
 
 app.listen(4000, () => {
     console.log("Listening...");

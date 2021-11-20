@@ -1,27 +1,38 @@
 
 const express = require("express");
-const router = express.Router();
 
 const expressJwt = require("express-jwt");
 const jwtErrorHandler = require("../helpers/jwt_error_handler");
 
-const company = require("../controller/company.controller");
+const CompanyController = require("../controller/company.controller");
 
-router.use(
-    expressJwt({ secret: "secret", algorithms: ["HS256"], requestProperty: "auth" }),
-    jwtErrorHandler("auth")
-);
+class CompanyRoute {
+    constructor () {
+        this.company = new CompanyController();
+    }
 
-router.route("/get-all")
-    .post(company.getAll);
+    getRouter() {
+        const router = express.Router();
 
-router.route("/create")
-    .post(company.create);
+        router.use(
+            expressJwt({ secret: "secret", algorithms: ["HS256"], requestProperty: "auth" }),
+            jwtErrorHandler("auth")
+        );
+        
+        router.route("/get-all")
+            .post(this.company.getAll);
+        
+        router.route("/create")
+            .post(this.company.create);
+        
+        router.route("/update")
+            .post(this.company.update);
+        
+        router.route("/delete")
+            .post(this.company.destroy);
+        
+        return router;
+    }
+}
 
-router.route("/update")
-    .post(company.update);
-
-router.route("/delete")
-    .post(company.destroy);
-
-module.exports = router;
+module.exports = CompanyRoute;

@@ -1,27 +1,38 @@
 
 const express = require("express");
-const router = express.Router();
 
 const expressJwt = require("express-jwt");
 const jwtErrorHandler = require("../helpers/jwt_error_handler");
 
-const presentation = require("../controller/presentation.controller");
+const PresentationController = require("../controller/presentation.controller");
 
-router.use(
-    expressJwt({ secret: "secret", algorithms: ["HS256"], requestProperty: "auth" }),
-    jwtErrorHandler("auth")
-);
+class PresentationRoute {
+    constructor () {
+        this.presentation = new PresentationController();
+    }
 
-router.route("/get-all")
-    .post(presentation.getAll);
+    getRouter() {
+        const router = express.Router();
 
-router.route("/create")
-    .post(presentation.create);
+        router.use(
+            expressJwt({ secret: "secret", algorithms: ["HS256"], requestProperty: "auth" }),
+            jwtErrorHandler("auth")
+        );
 
-router.route("/update")
-    .post(presentation.update);
+        router.route("/get-all")
+            .post(this.presentation.getAll);
 
-router.route("/delete")
-    .post(presentation.destroy);
+        router.route("/create")
+            .post(this.presentation.create);
 
-module.exports = router;
+        router.route("/update")
+            .post(this.presentation.update);
+
+        router.route("/delete")
+            .post(this.presentation.destroy);
+
+        return router;
+    }
+}
+
+module.exports = PresentationRoute;

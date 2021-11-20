@@ -1,27 +1,39 @@
 
 const express = require("express");
-const router = express.Router();
 
 const expressJwt = require("express-jwt");
 const jwtErrorHandler = require("../helpers/jwt_error_handler");
 
-const occupation = require("../controller/occupation.controller");
+const OccupationController = require("../controller/occupation.controller");
+const ParticipantRoute = require("./participant.route");
 
-router.use(
-    expressJwt({ secret: "secret", algorithms: ["HS256"], requestProperty: "auth" }),
-    jwtErrorHandler("auth")
-);
+class OccupationRoute {
+    constructor () {
+        this.occupation = new OccupationController();
+    }
 
-router.route("/get-all")
-    .post(occupation.getAll);
+    getRouter() {
+        const router = express.Router();
 
-router.route("/create")
-    .post(occupation.create);
+        router.use(
+            expressJwt({ secret: "secret", algorithms: ["HS256"], requestProperty: "auth" }),
+            jwtErrorHandler("auth")
+        );
+        
+        router.route("/get-all")
+            .post(this.occupation.getAll);
+        
+        router.route("/create")
+            .post(this.occupation.create);
+        
+        router.route("/update")
+            .post(this.occupation.update);
+        
+        router.route("/delete")
+            .post(this.occupation.destroy);
+        
+        return router;
+    }
+}
 
-router.route("/update")
-    .post(occupation.update);
-
-router.route("/delete")
-    .post(occupation.destroy);
-
-module.exports = router;
+module.exports = ParticipantRoute;
