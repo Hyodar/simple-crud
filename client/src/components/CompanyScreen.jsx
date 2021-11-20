@@ -16,7 +16,6 @@ export default function CompanyScreen(props) {
     const columns = [
         { title: "ID", field: "id", editable: "never", type: "numeric" },
         { title: "Nome", field: "name" },
-        { title: "#Participantes", field: "participantCount", editable: "never" },
     ];
 
     useEffect(() => {

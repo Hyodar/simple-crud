@@ -16,7 +16,6 @@ export default function OccupationScreen(props) {
     const columns = [
         { title: "ID", field: "id", editable: "never", type: "numeric" },
         { title: "Nome", field: "name" },
-        { title: "#Participantes", field: "participantCount", editable: "never" },
     ];
 
     useEffect(() => {
@@ -26,7 +25,6 @@ export default function OccupationScreen(props) {
                 const occupations = resp.data.map(el => ({
                     id: el.id,
                     name: el.name,
-                    participantCount: 99999,
                 }));
 
                 setData(occupations);
