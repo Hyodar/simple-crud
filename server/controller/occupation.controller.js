@@ -1,6 +1,6 @@
 
 const httpStatus = require("http-status");
-const { Occupation } = require("../config/sequelize");
+const { Occupation } = require("../config/sequelize").getDb();
 const APIError = require("../helpers/api_error");
 
 class OccupationController {

@@ -3,8 +3,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const httpStatus = require("http-status");
 
+const Database = require("./config/sequelize");
+Database.createDb();
+
 const MainRoute = require("./route/main.route.js");
-const db = require("./config/sequelize");
 
 const app = express();
 const mainRoute = new MainRoute();

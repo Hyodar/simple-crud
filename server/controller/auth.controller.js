@@ -1,5 +1,5 @@
 
-const { User } = require("../config/sequelize");
+const { User } = require("../config/sequelize").getDb();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const httpStatus = require("http-status");

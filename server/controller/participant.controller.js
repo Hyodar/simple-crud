@@ -1,6 +1,6 @@
 
 const httpStatus = require("http-status");
-const { Participant, Occupation, Company } = require("../config/sequelize");
+const { Participant, Occupation, Company } = require("../config/sequelize").getDb();
 const APIError = require("../helpers/api_error");
 
 class ParticipantController {

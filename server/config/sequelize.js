@@ -7,44 +7,48 @@ const path = require("path");
 const modelAssociations = require("./sequelize-associations");
 const initializeDb = require("./db-defaults");
 
-const sequelize = new Sequelize({
-    dialect: "sqlite",
-    storage: "./db.sqlite",
-    logging: console.log,
-});
+class Database {}
 
-sequelize.authenticate()
-    .then(console.log)
-    .catch(console.log);
-
-const db = {};
-
-fs.readdirSync("./model")
-    .forEach(file => {
-        const model = require(`../model/${file}`)(sequelize, Sequelize);
-
-        db[model.name] = model;
+Database.createDb = () => {
+    Database.sequelize = new Sequelize({
+        dialect: "sqlite",
+        storage: "./db.sqlite",
+        logging: console.log,
     });
 
-modelAssociations.forEach(({ source, target, type, params }) => {
-    const sourceModel = db[source];
-    const targetModel = db[target];
-    sourceModel[type](targetModel, params || {});
-});
+    Database.db = {};
+    
+    Database.sequelize.authenticate()
+        .then(console.log)
+        .catch(console.log);
 
-const forceSync = true;
+        fs.readdirSync("./model")
+        .forEach(file => {
+            const model = require(`../model/${file}`)(Database.sequelize, Sequelize);
+    
+            Database.db[model.name] = model;
+        });
+    
+    modelAssociations.forEach(({ source, target, type, params }) => {
+        const sourceModel = Database.db[source];
+        const targetModel = Database.db[target];
+        sourceModel[type](targetModel, params || {});
+    });
+    
+    const forceSync = true;
+    
+    Database.sequelize
+        .sync({ force: forceSync })
+        .then(() => {
+            if (forceSync) {
+                initializeDb(Database.db);
+            }
+        })
+        .catch(err => console.error(err));
+}
 
-sequelize
-    .sync({ force: forceSync })
-    .then(() => {
-        if (forceSync) {
-            initializeDb(db);
-        }
-    })
-    .catch(err => console.error(err));
+Database.getDb = () => {
+    return Database.db;
+}
 
-module.exports = {
-    sequelize,
-    Sequelize,
-    ...db
-};
+module.exports = Database;
